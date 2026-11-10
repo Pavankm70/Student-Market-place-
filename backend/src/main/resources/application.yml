@@ -1,0 +1,99 @@
+server:
+  port: ${PORT:8081}
+  error:
+    include-message: always
+    include-binding-errors: always
+
+spring:
+  application:
+    name: campus-marketplace
+
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/campus_marketplace?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:MySql@2026}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: false
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  mail:
+    host: ${SPRING_MAIL_HOST:smtp.gmail.com}
+    port: ${SPRING_MAIL_PORT:465}
+    username: ${SPRING_MAIL_USERNAME:your-email@gmail.com}
+    password: ${SPRING_MAIL_PASSWORD:your-app-password}
+    protocol: smtps
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: false
+            required: false
+          ssl:
+            enable: true
+            trust: "smtp.gmail.com"
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
+            fallback: false
+          connectiontimeout: 10000
+          timeout: 10000
+          writetimeout: 10000
+        smtps:
+          auth: true
+          ssl:
+            enable: true
+            trust: "smtp.gmail.com"
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
+            fallback: false
+          connectiontimeout: 10000
+          timeout: 10000
+          writetimeout: 10000
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:mySuperSecretJwtKeyThatIsAtLeast256BitsLongForRenderDeployment12345}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000} # 24 hours
+  cors:
+    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000,http://localhost:4173}
+  upload:
+    dir: ${UPLOAD_DIR:./uploads}
+  cloudinary:
+    cloud-name: ${CLOUDINARY_CLOUD_NAME:}
+    api-key: ${CLOUDINARY_API_KEY:}
+    api-secret: ${CLOUDINARY_API_SECRET:}
+    url: ${CLOUDINARY_URL:}
+  external:
+    google-books-api: ${EXTERNAL_BOOKS_API_URL:https://www.googleapis.com/books/v1/volumes}
+    google-books-key: ${GOOGLE_BOOKS_API_KEY:}
+  college:
+    allowed-domains: ${COLLEGE_ALLOWED_DOMAINS:nmit.ac.in,campus.edu}
+    require-verification-review: ${REQUIRE_ENROLLMENT_REVIEW:false}
+  google:
+    client-id: ${GOOGLE_CLIENT_ID:your-google-oauth-client-id.apps.googleusercontent.com}
+    client-secret: ${GOOGLE_CLIENT_SECRET:your-google-oauth-client-secret}
+    enforce-gmail-only: ${ENFORCE_GMAIL_ONLY:true}
+  razorpay:
+    key-id: ${RAZORPAY_KEY_ID:rzp_test_Tr0vZ94TcR5yD8}
+    key-secret: ${RAZORPAY_KEY_SECRET:your-razorpay-key-secret}
+    currency: ${RAZORPAY_CURRENCY:INR}
+  mail:
+    from: ${MAIL_FROM:${SPRING_MAIL_USERNAME:your-email@gmail.com}}
+    enabled: ${MAIL_ENABLED:true}
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html

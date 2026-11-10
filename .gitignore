@@ -1,0 +1,26 @@
+# System & Crash Logs
+*.log
+hs_err_pid*
+replay_pid*
+
+# Local MySQL data
+mysql_local_data/
+
+# Backend Build & Uploads
+backend/target/
+backend/uploads/
+backend/*.log
+
+# Frontend Build & Dependencies
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.local
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.sw?

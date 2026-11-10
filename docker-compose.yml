@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: campusloop-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${DB_NAME:-campus_marketplace}
+      MYSQL_USER: ${DB_USERNAME:-campus_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-campus_pass}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: campus-marketplace-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - DB_URL=${DB_URL:-jdbc:mysql://mysql:3306/campus_marketplace?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+      - DB_USERNAME=${DB_USERNAME:-campus_user}
+      - DB_PASSWORD=${DB_PASSWORD:-campus_pass}
+      - JWT_SECRET=${JWT_SECRET:-mySuperSecretJwtKeyThatIsAtLeast256BitsLongForRenderDeployment12345}
+      - JWT_EXPIRATION_MS=${JWT_EXPIRATION_MS:-86400000}
+      - GOOGLE_BOOKS_API_KEY=${GOOGLE_BOOKS_API_KEY:-}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:5173,http://localhost:80,http://localhost:3000}
+    volumes:
+      - backend-uploads:/app/uploads
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:8080
+    container_name: campus-marketplace-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  mysql-data:
+  backend-uploads:
